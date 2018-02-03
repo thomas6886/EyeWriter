@@ -1,0 +1,218 @@
+::-webkit-scrollbar { display: none; }
+
+:root {
+    --backgroundcolor: #2980b9;
+    --keycolor: #ecf0f1;
+
+}
+
+img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.containerblock {
+  width:100%;
+  min-height: 1080px;
+}
+
+html,
+body {
+    background: #2c3e50;
+    -webkit-app-region: drag;
+    -webkit-user-select: none;
+    width: 100%;
+}
+
+.textboxtext {
+  position: absolute
+  display: inline-block;
+  margin-left: 1%;
+  font-family: roboto;
+  font-size: 55spx;
+  color: #ecf0f1;
+  transform: translateY(-100%);
+  vertical-align: top;
+
+}
+
+.textbox {
+  margin-top: 10px;
+  background-color: #34495e;
+  width: 100%;
+  border-radius: 10px;
+  position: relative;
+  font-family: roboto;
+  font-size: 55px;
+  color: #ecf0f1;
+
+  -webkit-app-region: no-drag;
+}
+
+.movehalf {
+  transform: translate(-100px, 0px);
+}
+
+.keycap_progress {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -48%);
+  width: 100%;
+  /*padding-left: 0px;
+  padding-right: 0px;*/
+  z-index: 3;
+}
+
+.keycap_psleep {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -48%);
+  width: 100%;
+  /*padding-left: 0px;
+  padding-right: 0px;*/
+  z-index: 3;
+}
+
+.keycap {
+  background-color: #ecf0f1;
+  border-radius: 100px;
+  width: 100%;
+  position: relative;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 100%;
+  /*box-shadow: 5px 5px;*/
+  margin-top: 10px;
+
+
+  -webkit-app-region: no-drag;
+}
+
+.keycap_sleep {
+  background-color: #ecf0f1;
+  border-radius: 100px;
+  width: 100%;
+  position: relative;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 100%;
+  /*box-shadow: 5px 5px;*/
+  margin-top: 10px;
+
+
+  -webkit-app-region: no-drag;
+}
+
+.keycap-wide {
+  background-color: #ecf0f1;
+  border-radius: 100px;
+  width: 100%;
+  position: relative;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 11%;
+  /*box-shadow: 5px 5px;*/
+  margin-top: 10px;
+
+
+  -webkit-app-region: no-drag;
+}
+
+.keycap-half {
+  background-color: #2c3e50;
+  border-radius: 10px;
+  width: 100%;
+  position: relative;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10%;
+  /*text-transform: translate(-100px, 0px);*/
+
+  margin-top: 10px;
+
+
+  -webkit-app-region: no-drag;
+}
+
+keycap-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-block;
+  font-family: roboto;
+  font-size: 55px;
+  text-align: center;
+}
+
+keycap-text-small {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-block;
+  font-family: roboto;
+  font-size: 25px;
+  text-align: center;
+}
+
+
+
+.close {
+    cursor: pointer;
+    display: inline-block;
+    height: 32px;
+    position: absolute;
+    text-indent: -10000px;
+    top: 6px;
+    right: 6px;
+    width: 32px;
+    z-index: 1;
+    background: transparent url('../img/close.png') no-repeat 4px 4px;
+    background-size: 24px 24px;
+
+
+    -webkit-app-region: no-drag;
+}
+
+/*Custom 10 grid*/
+
+.cuscol-1 {width: 10%;}
+.cuscol-2 {width: 20%;}
+.cuscol-3 {width: 30%;}
+.cuscol-4 {width: 40%;}
+.cuscol-5 {width: 50%;}
+.cuscol-6 {width: 60%;}
+.cuscol-7 {width: 70%;}
+.cuscol-8 {width: 80%;}
+.cuscol-9 {width: 90%;}
+.cuscol-10 {width: 100%;}
+
+[class*="cuscol-"] {
+    float: left;
+    padding: 10px;
+}
+
+.cusrow::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+/*Custom 4 blocks grid*/
+
+.cusblock-block {width: 22%;}
+.cusblock-space {width: 4%;}
+
+[class*="cusblock-"] {
+    float: left;
+    padding: 10px;
+}
+
+.cusrowblock::after {
+    content: "";
+    clear: both;
+    display: table;
+}

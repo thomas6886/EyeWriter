@@ -1,0 +1,9 @@
+version: 0.1.0
+files:
+  - url: sound_machine-setup-0.1.0.exe
+    sha512: YW8UOFB+a36psXz/hxa1fnTMyHOBARF+Nzo35qnq2+UdqYytXv/n54fvsrvIjVh8cyRd1QESxh6oaKrvwlLeeQ==
+    size: 38008837
+path: sound_machine-setup-0.1.0.exe
+sha512: YW8UOFB+a36psXz/hxa1fnTMyHOBARF+Nzo35qnq2+UdqYytXv/n54fvsrvIjVh8cyRd1QESxh6oaKrvwlLeeQ==
+sha2: 177deb6c276c5153d78bf705d847fd1fbed4a53e599fa0120429ad531102e74d
+releaseDate: '2018-02-01T07:05:47.544Z'
