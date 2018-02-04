@@ -27,7 +27,6 @@ var CDelay_fast = 600;
 function onStartup(){
   document.getElementById('keycap_speed_normal').style.color = 'green';
   confirmationDelay = CDelay_normal;
-  console.log("TEST");
 }
 
 //Sets confirmationDelay, how long you have to look at an object before it confirms your selection
