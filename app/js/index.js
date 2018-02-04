@@ -1,7 +1,7 @@
 /*jshint esversion: 6 */
 
 /**Imports**/
-var ipc = require('ipc');
+//var ipc = require('ipc');
 var ProgressBar = require('progressbar.js');
 
 
@@ -27,6 +27,7 @@ var CDelay_fast = 600;
 function onStartup(){
   document.getElementById('keycap_speed_normal').style.color = 'green';
   confirmationDelay = CDelay_normal;
+  console.log("TEST");
 }
 
 //Sets confirmationDelay, how long you have to look at an object before it confirms your selection
@@ -347,7 +348,7 @@ function performAction(){
         //TODO Add calibration
       break;
       case "exit":
-        ipc.send('close-main-window');
+        //ipc.send('close-main-window');
       break;
 
       default:
