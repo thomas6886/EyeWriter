@@ -3,6 +3,7 @@
 /**Imports**/
 //var ipc = require('ipc');
 var ProgressBar = require('progressbar.js');
+const remote = require('electron').remote;
 
 
 /**Program variables**/
@@ -348,6 +349,8 @@ function performAction(){
       break;
       case "exit":
         //ipc.send('close-main-window');
+        var window = remote.getCurrentWindow();
+        window.close();
       break;
 
       default:
