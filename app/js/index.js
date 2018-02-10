@@ -1,18 +1,29 @@
 /*jshint esversion: 6 */
 
 /**Imports**/
-//var ipc = require('ipc');
 var ProgressBar = require('progressbar.js');
 const remote = require('electron').remote;
+
+//Web Server
+net = require('net');
 
 
 /**Program variables**/
 var currLetter = null;
 var currProgressbar = null;
 var currTimer = null;
+var currPage = 0;
 var confirmationDelay;
+var webhost = '127.0.0.1';
+var webport = 6969;
 
 var isSleeping = false;
+
+//EyeTracking
+var eyecursor;
+var cursx;
+var cursy;
+
 
 /**User variables**/
 var screenHeight = 1080;
@@ -26,8 +37,57 @@ var CDelay_fast = 600;
 /**Custom functions**/
 //Things to do at startup
 function onStartup(){
+  //Set Default speed
   document.getElementById('keycap_speed_normal').style.color = 'green';
   confirmationDelay = CDelay_normal;
+
+  //EyeTracking
+  eyecursor = document.getElementById("eyecursor");
+  cursx = screen.width / 2;
+  cursy = screen.height / 2;
+  //Data Server
+  createWebServer();
+
+  //Start the loop
+  setInterval(function(){ loop_20(); }, 50);
+  setInterval(function(){ loop_5(); }, 100);
+
+}
+
+//Function that runs at 20Hz, use it wisely
+function loop_20(){
+  eyecursor.style.left = cursx+"px";
+  eyecursor.style.top = cursy+"px";
+}
+
+function loop_5(){
+  var item = document.elementFromPoint(cursx+"px", cursy+"px");
+  item.trigger("click");
+}
+
+//Create webserver
+function createWebServer(){
+  net.createServer(function(sock) {
+
+    // We have a connection - a socket object is assigned to the connection automatically
+    console.log('CONNECTED: ' + sock.remoteAddress +':'+ sock.remotePort);
+
+    // Add a 'data' event handler to this instance of socket
+    sock.on('data', function(data) {
+        var arr = data.toString().split(":");
+        cursx = arr[0];
+        cursy = arr[1];
+
+
+    });
+
+    // Add a 'close' event handler to this instance of socket
+    sock.on('close', function(data) {
+        console.log('CLOSED: ' + sock.remoteAddress +' '+ sock.remotePort);
+    });
+
+}).listen(webport, webhost);
+console.log('Server listening on ' + webhost +':'+ webport);
 }
 
 //Sets confirmationDelay, how long you have to look at an object before it confirms your selection
@@ -35,24 +95,34 @@ function setConfirmationDelay(delay){
   confirmationDelay = delay;
 }
 
+
+
 //Get y coordinate of given page
 function getPageLocation(pagename){
   switch(pagename){
     case "main":
+      currPage = 0;
       return 0 * screenHeight;
     case "sentences":
+      currPage = 1;
       return 1 * screenHeight;
     case "sentences_eatdrink":
+      currPage = 2;
       return 2 * screenHeight;
     case "sentences_sot":
+      currPage = 3;
       return 3 * screenHeight;
     case "sentences_conversation":
+      currPage = 4;
       return 4 * screenHeight;
     case "sentences_toilethygiene":
+      currPage = 5;
       return 5 * screenHeight;
     case "sentences_relax":
+      currPage = 6;
       return 6 * screenHeight;
     case "settings":
+      currPage = 7;
       return 7 * screenHeight;
 
   }

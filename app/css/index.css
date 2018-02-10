@@ -11,6 +11,17 @@
 
 }
 
+.eyecursor {
+  position: fixed;
+  border-radius: 10%;
+  z-index: 1000;
+  width: 125px;
+  height: 125px;
+  background-color: #f1c40f;
+  opacity: 0.5;
+  transform: translate(-50%, -50%);
+}
+
 img {
     max-width: 100%;
     max-height: 100%;
