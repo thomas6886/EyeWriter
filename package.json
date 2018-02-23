@@ -10,11 +10,16 @@
   "devDependencies": {
     "electron": "~1.7.8",
     "electron-builder": "^19.55.3",
-    "electron-packager": "^10.1.0"
+    "electron-packager": "^10.1.0",
+    "electron-rebuild": "^1.7.3"
   },
   "license": "MIT",
   "dependencies": {
     "bootstrap": "^3.3.7",
+    "electron-edge": "^6.5.5",
+    "gazejs": "^0.5.1-5",
+    "gazelinger": "git+https://github.com/coughdrop/gazelinger.git",
+    "named-pipes": "0.0.1",
     "progressbar.js": "^1.0.1"
   },
   "build": {

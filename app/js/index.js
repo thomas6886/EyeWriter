@@ -4,6 +4,8 @@
 var ProgressBar = require('progressbar.js');
 const remote = require('electron').remote;
 
+const {ipcRenderer} = require('electron');
+
 //Web Server
 net = require('net');
 
@@ -52,17 +54,23 @@ function onStartup(){
   setInterval(function(){ loop_20(); }, 50);
   setInterval(function(){ loop_5(); }, 100);
 
+
+
 }
 
 //Function that runs at 20Hz, use it wisely
 function loop_20(){
   eyecursor.style.left = cursx+"px";
   eyecursor.style.top = cursy+"px";
+  //console.log(cursx + " : " + cursy);
+  ipcRenderer.send('eye_events', cursx+":"+cursy+":");
 }
 
 function loop_5(){
-  var item = document.elementFromPoint(cursx+"px", cursy+"px");
-  item.trigger("click");
+  //var item = document.elementFromPoint(eyecursor.style.left, eyecursor.style.top);
+  //console.log(item);
+  //item.trigger("click");
+  //ipcRenderer.send('eye_events', cursx+":"+cursy+":");
 }
 
 //Create webserver
@@ -484,6 +492,15 @@ function enableButtons(){
   for (var j = 0; j < btn.length; j++) {
       sleepbtn[j].addEventListener("click", function() {
           startLetter(this);
+      }, false);
+  }
+
+  //BACKGROUND CANCELLER
+  var background_element = document.querySelectorAll(".containerblock");
+  for (var k = 0; k < background_element.length; k++) {
+      sleepbtn[k].addEventListener("click", function() {
+          clearTimeout(currTimer);
+          removeBar(currProgressbar);
       }, false);
   }
 }
