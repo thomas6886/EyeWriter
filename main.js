@@ -21,7 +21,8 @@ function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     frame: false,
-    resizable: true
+    resizable: true,
+    width: 1920, height:1080
   });
 
   // and load the index.html of the app.
@@ -70,22 +71,22 @@ app.on('activate', function () {
 // code. You can also put them in separate files and require them here.
 
 ipcMain.on('eye_events', (event, arg) => {
-  console.log(arg);
+  //console.log(arg);
   var arr = arg.toString().split(":");
   var x_input = parseInt(arr[0]);
   var y_input = parseInt(arr[1]);
-  mainWindow.webContents.sendInputEvent({type:'mouseDown', x: x_input, y: y_input, button:'left', clickCount: 1});
-  mainWindow.webContents.sendInputEvent({type:'mouseUp', x: x_input, y: y_input, button:'left', clickCount: 1});
+  //mainWindow.webContents.sendInputEvent({type:'mouseDown', x: x_input, y: y_input, button:'left', clickCount: 1});
+  //mainWindow.webContents.sendInputEvent({type:'mouseUp', x: x_input, y: y_input, button:'left', clickCount: 1});
 
-  mainWindow.webContents.sendInputEvent({type:'mouseDown', x: x_input-10, y: y_input, button:'left', clickCount: 1});
-  mainWindow.webContents.sendInputEvent({type:'mouseUp', x: x_input-10, y: y_input, button:'left', clickCount: 1});
+  //mainWindow.webContents.sendInputEvent({type:'mouseDown', x: x_input-10, y: y_input, button:'left', clickCount: 1});
+  //mainWindow.webContents.sendInputEvent({type:'mouseUp', x: x_input-10, y: y_input, button:'left', clickCount: 1});
 
-  mainWindow.webContents.sendInputEvent({type:'mouseDown', x: x_input+10, y: y_input, button:'left', clickCount: 1});
-  mainWindow.webContents.sendInputEvent({type:'mouseUp', x: x_input+10, y: y_input, button:'left', clickCount: 1});
+  //mainWindow.webContents.sendInputEvent({type:'mouseDown', x: x_input+10, y: y_input, button:'left', clickCount: 1});
+  //mainWindow.webContents.sendInputEvent({type:'mouseUp', x: x_input+10, y: y_input, button:'left', clickCount: 1});
 
-  mainWindow.webContents.sendInputEvent({type:'mouseDown', x: x_input, y: y_input-10, button:'left', clickCount: 1});
-  mainWindow.webContents.sendInputEvent({type:'mouseUp', x: x_input, y: y_input-10, button:'left', clickCount: 1});
+  //mainWindow.webContents.sendInputEvent({type:'mouseDown', x: x_input, y: y_input-10, button:'left', clickCount: 1});
+  //mainWindow.webContents.sendInputEvent({type:'mouseUp', x: x_input, y: y_input-10, button:'left', clickCount: 1});
 
-  mainWindow.webContents.sendInputEvent({type:'mouseDown', x: x_input, y: y_input+10, button:'left', clickCount: 1});
-  mainWindow.webContents.sendInputEvent({type:'mouseUp', x: x_input, y: y_input+10, button:'left', clickCount: 1});
+  //mainWindow.webContents.sendInputEvent({type:'mouseDown', x: x_input, y: y_input+10, button:'left', clickCount: 1});
+  //mainWindow.webContents.sendInputEvent({type:'mouseUp', x: x_input, y: y_input+10, button:'left', clickCount: 1});
 });

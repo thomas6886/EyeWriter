@@ -1,113 +1,121 @@
 /*jshint esversion: 6 */
 
 /**Imports**/
-var ProgressBar = require('progressbar.js');
+const ProgressBar = require('progressbar.js');
 const remote = require('electron').remote;
-
 const {ipcRenderer} = require('electron');
+var offset = require('document-offset')
 
 //Web Server
 net = require('net');
-
 
 /**Program variables**/
 var currLetter = null;
 var currProgressbar = null;
 var currTimer = null;
 var currPage = 0;
-var confirmationDelay;
+var confirmationDelay = null;
 var webhost = '127.0.0.1';
 var webport = 6969;
-
 var isSleeping = false;
 
 //EyeTracking
+var eyelocation;
 var eyecursor;
 var cursx;
 var cursy;
+var eye_buttons;
 
+//canvas
+var canvas = document.getElementById('can');
+var context = canvas.getContext('2d');
 
 /**User variables**/
 var screenHeight = 1080;
+var triggerDistance = 100;
+var touchShouldHaveDelay = true;
 
 //ConfirmationDelay values
 var CDelay_slowest = 4000;
-var CDelay_slow = 2000;
-var CDelay_normal = 1000;
-var CDelay_fast = 600;
+var CDelay_slow = 3000;
+var CDelay_normal = 2000;
+var CDelay_fast = 1000;
 
 /**Custom functions**/
 //Things to do at startup
-function onStartup(){
-  //Set Default speed
-  document.getElementById('keycap_speed_normal').style.color = 'green';
-  confirmationDelay = CDelay_normal;
+function onStartup() {
+  //Set default settings
+  setDefaults();
 
-  //EyeTracking
-  eyecursor = document.getElementById("eyecursor");
-  cursx = screen.width / 2;
-  cursy = screen.height / 2;
+  //Enables eyetracking
+  setupEyeTracking();
+
   //Data Server
   createWebServer();
 
   //Start the loop
-  setInterval(function(){ loop_20(); }, 50);
   setInterval(function(){ loop_5(); }, 100);
 
-
-
 }
 
-//Function that runs at 20Hz, use it wisely
-function loop_20(){
+function setDefaults(){
+  document.getElementById('keycap_speed_normal').style.color = 'green';
+  confirmationDelay = CDelay_normal;
+}
+
+function setupEyeTracking(){
+  eye_buttons = [];
+  eyecursor = document.getElementById("eyecursor");
+  eyelocation = document.getElementById("eyelocation");
+  cursx = 0;
+  cursy = 0;
+}
+
+function loop_5() {
   eyecursor.style.left = cursx+"px";
   eyecursor.style.top = cursy+"px";
-  //console.log(cursx + " : " + cursy);
-  ipcRenderer.send('eye_events', cursx+":"+cursy+":");
+  //console.log(window.pageYOffset);
+  console.log(cursy);
+  updateEyeButtons();
 }
 
-function loop_5(){
-  //var item = document.elementFromPoint(eyecursor.style.left, eyecursor.style.top);
-  //console.log(item);
-  //item.trigger("click");
-  //ipcRenderer.send('eye_events', cursx+":"+cursy+":");
+function updateEyeButtons(){
+  for (var e = 0; e < eye_buttons.length; e++) {
+    eye_buttons[e].update();
+  }
 }
 
 //Create webserver
-function createWebServer(){
+function createWebServer() {
   net.createServer(function(sock) {
 
     // We have a connection - a socket object is assigned to the connection automatically
-    console.log('CONNECTED: ' + sock.remoteAddress +':'+ sock.remotePort);
+    console.log('CONNECTED: ' + sock.remoteAddress + ':' + sock.remotePort);
 
     // Add a 'data' event handler to this instance of socket
     sock.on('data', function(data) {
-        var arr = data.toString().split(":");
-        cursx = arr[0];
-        cursy = arr[1];
-
-
+      var arr = data.toString().split(":");
+      cursx = arr[0];
+      cursy = arr[1];
     });
 
     // Add a 'close' event handler to this instance of socket
     sock.on('close', function(data) {
-        console.log('CLOSED: ' + sock.remoteAddress +' '+ sock.remotePort);
+      console.log('CLOSED: ' + sock.remoteAddress + ' ' + sock.remotePort);
     });
 
-}).listen(webport, webhost);
-console.log('Server listening on ' + webhost +':'+ webport);
+  }).listen(webport, webhost);
+  console.log('Server listening on ' + webhost + ':' + webport);
 }
 
 //Sets confirmationDelay, how long you have to look at an object before it confirms your selection
-function setConfirmationDelay(delay){
+function setConfirmationDelay(delay) {
   confirmationDelay = delay;
 }
 
-
-
 //Get y coordinate of given page
-function getPageLocation(pagename){
-  switch(pagename){
+function getPageLocation(pagename) {
+  switch (pagename) {
     case "main":
       currPage = 0;
       return 0 * screenHeight;
@@ -137,79 +145,78 @@ function getPageLocation(pagename){
 }
 
 //Scrolls to given page
-function goToPage(pagename){
+function goToPage(pagename) {
   window.scrollTo(0, getPageLocation(pagename));
 }
 
 //Starts progressbar ARGS: Progressbar to start
-function startBar(pbar){
+function startBar(pbar) {
   pbar.animate(1.0);
 }
 
 //Stops progressbar ARGS: Progressbar to stop
-function stopBar(pbar){
+function stopBar(pbar) {
   pbar.stop();
 }
 
 //Removes progressbar ARGS: Progressbar to remove
-function removeBar(pbar){
-  pbar.destroy();
-  currProgressbar = null;
-  currLetter = null;
+function removeBar(pbar) {
+  if (pbar != null) {
+    pbar.destroy();
+    currProgressbar = null;
+    currLetter = null;
+  }
 }
 
 //Adds text to textbox, only used for testing ARGS: Text to add
-function insertText(text){
+function insertText(text) {
   document.getElementById('textbox').innerHTML = text;
 }
 
 //Adds letter to textbox ARGS: Letter to add
-function addLetter(letter){
+function addLetter(letter) {
   document.getElementById('textbox').innerHTML += letter;
 }
 
 //Remove last letter from textbox
-function removeLastL(){
+function removeLastL() {
   prev = document.getElementById('textbox').innerHTML;
   var newStr = prev.slice(0, -1);
   document.getElementById('textbox').innerHTML = newStr;
 }
 
 //Remove last word from textbox
-function removeLastW(){
+function removeLastW() {
   var currText = document.getElementById('textbox').innerHTML;
   var newText = "";
-  if (currText.includes(" "))
-            {
-                var lastSpace = currText.lastIndexOf(" ");
-                newText = currText.substring(0, lastSpace);
-            }
-            else
-            {
-                newText = "";
-            }
-    document.getElementById('textbox').innerHTML = newText;
+  if (currText.includes(" ")) {
+    var lastSpace = currText.lastIndexOf(" ");
+    newText = currText.substring(0, lastSpace);
+  } else {
+    newText = "";
+  }
+  document.getElementById('textbox').innerHTML = newText;
 }
 //Clears textboxtext
-function clearText(){
+function clearText() {
   document.getElementById('textbox').innerHTML = "";
 }
 
 //Toggles the sleeping state
-function toggleSleeping(){
+function toggleSleeping() {
   isSleeping = !isSleeping;
 }
 
 //Makes the program speak the text in the textbox
-function speak(){
+function speak() {
   var text = document.getElementById('textbox').innerHTML;
   responsiveVoice.speak(text, "Dutch Female");
 }
 
 //Creates progressbar for every letter when called ARGS: Button which to create progressbar for
-function createProgressbar(element_id){
+function createProgressbar(element_id) {
   var progressbarletter = null;
-  if(element_id == "keycap_space"){
+  if (element_id == "keycap_space") {
     progressbarletter = new ProgressBar.Line(document.getElementById(element_id), {
       strokeWidth: 3,
       easing: 'linear',
@@ -220,7 +227,8 @@ function createProgressbar(element_id){
       svgStyle: null
     });
     currProgressbar = progressbarletter;
-  }else{
+  } else {
+    //console.log(document.getElementById(element_id));
     progressbarletter = new ProgressBar.Circle(document.getElementById(element_id), {
       strokeWidth: 6,
       easing: 'linear',
@@ -236,273 +244,359 @@ function createProgressbar(element_id){
 }
 
 //Performs the action according to which button is pressed
-function performAction(){
-    var input = currLetter.replace("keycap_", "");
-    //PLACEHOLDER BOXES
-    if(input.includes("EMPTY_")){
-      input = "donothing";
+function performAction() {
+  var input = currLetter.replace("keycap_", "");
+  //PLACEHOLDER BOXES
+  if (input.includes("EMPTY_")) {
+    input = "donothing";
+  }
+  //KEYS THAT GO BACK
+  if (input.includes("back_")) {
+    input = "goback";
+  }
+  //Delay setting keys
+  if (input.includes("speed_")) {
+    var desiredSpeed = input.substring(6, input.length);
+    switch (desiredSpeed) {
+      case "slowest":
+        setConfirmationDelay(CDelay_slowest);
+        document.getElementById('keycap_speed_slowest').style.color = 'green';
+        document.getElementById('keycap_speed_slow').style.color = 'black';
+        document.getElementById('keycap_speed_normal').style.color = 'black';
+        document.getElementById('keycap_speed_fast').style.color = 'black';
+
+        break;
+      case "slow":
+        setConfirmationDelay(CDelay_slow);
+        document.getElementById('keycap_speed_slowest').style.color = 'black';
+        document.getElementById('keycap_speed_slow').style.color = 'green';
+        document.getElementById('keycap_speed_normal').style.color = 'black';
+        document.getElementById('keycap_speed_fast').style.color = 'black';
+
+        break;
+      case "normal":
+        setConfirmationDelay(CDelay_normal);
+        document.getElementById('keycap_speed_slowest').style.color = 'black';
+        document.getElementById('keycap_speed_slow').style.color = 'black';
+        document.getElementById('keycap_speed_normal').style.color = 'green';
+        document.getElementById('keycap_speed_fast').style.color = 'black';
+
+        break;
+      case "fast":
+        setConfirmationDelay(CDelay_fast);
+        document.getElementById('keycap_speed_slowest').style.color = 'black';
+        document.getElementById('keycap_speed_slow').style.color = 'black';
+        document.getElementById('keycap_speed_normal').style.color = 'black';
+        document.getElementById('keycap_speed_fast').style.color = 'green';
+
+        break;
     }
-    //KEYS THAT GO BACK
-    if(input.includes("back_")){
-      input = "goback";
-    }
-    //Delay setting keys
-    if(input.includes("speed_")){
-      var desiredSpeed = input.substring(6, input.length);
-      switch(desiredSpeed){
-        case "slowest":
-          setConfirmationDelay(CDelay_slowest);
-          document.getElementById('keycap_speed_slowest').style.color = 'green';
-          document.getElementById('keycap_speed_slow').style.color = 'black';
-          document.getElementById('keycap_speed_normal').style.color = 'black';
-          document.getElementById('keycap_speed_fast').style.color = 'black';
+    input = "donothing";
+  }
 
-        break;
-        case "slow":
-          setConfirmationDelay(CDelay_slow);
-          document.getElementById('keycap_speed_slowest').style.color = 'black';
-          document.getElementById('keycap_speed_slow').style.color = 'green';
-          document.getElementById('keycap_speed_normal').style.color = 'black';
-          document.getElementById('keycap_speed_fast').style.color = 'black';
-
-        break;
-        case "normal":
-          setConfirmationDelay(CDelay_normal);
-          document.getElementById('keycap_speed_slowest').style.color = 'black';
-          document.getElementById('keycap_speed_slow').style.color = 'black';
-          document.getElementById('keycap_speed_normal').style.color = 'green';
-          document.getElementById('keycap_speed_fast').style.color = 'black';
-
-        break;
-        case "fast":
-          setConfirmationDelay(CDelay_fast);
-          document.getElementById('keycap_speed_slowest').style.color = 'black';
-          document.getElementById('keycap_speed_slow').style.color = 'black';
-          document.getElementById('keycap_speed_normal').style.color = 'black';
-          document.getElementById('keycap_speed_fast').style.color = 'green';
-
-        break;
-      }
-      input = "donothing";
-    }
-
-    switch(input){
-      //EVERYWHERE
-      case "donothing":
-        //DO NOTHING
+  switch (input) {
+    //EVERYWHERE
+    case "donothing":
+      //DO NOTHING
       break;
-      case "goback":
-        goToPage("main");
+    case "goback":
+      goToPage("main");
       break;
       //PAGE MAIN
-      case "speak":
-        speak();
+    case "speak":
+      speak();
       break;
-      case "wback":
-        removeLastW();
+    case "wback":
+      removeLastW();
       break;
-      case "backspace":
-        removeLastL();
+    case "backspace":
+      removeLastL();
       break;
-      case "clear":
-        clearText();
+    case "clear":
+      clearText();
       break;
-      case "settings":
-        goToPage("settings");
+    case "settings":
+      goToPage("settings");
 
       break;
-      case "...":
-        goToPage("sentences");
+    case "...":
+      goToPage("sentences");
       break;
-      case "123":
-        //TODO Add number menu
+    case "123":
+      //TODO Add number menu
       break;
-      case "space":
-        addLetter(" ");
+    case "space":
+      addLetter(" ");
       break;
-      case "sleep":
-        toggleSleeping();
-        checkButtonOverlay();
+    case "sleep":
+      toggleSleeping();
+      checkButtonOverlay();
       break;
 
       //PAGE SENTENCES
-      case "eatdrink":
-        goToPage("sentences_eatdrink");
+    case "eatdrink":
+      goToPage("sentences_eatdrink");
       break;
-      case "sot":
-        goToPage("sentences_sot");
+    case "sot":
+      goToPage("sentences_sot");
       break;
-      case "conversation":
-        goToPage("sentences_conversation");
+    case "conversation":
+      goToPage("sentences_conversation");
       break;
-      case "toilethygiene":
-        goToPage("sentences_toilethygiene");
+    case "toilethygiene":
+      goToPage("sentences_toilethygiene");
       break;
-      case "relax":
-        goToPage("sentences_relax");
+    case "relax":
+      goToPage("sentences_relax");
       break;
 
 
       //PAGE SENTENCES_EATDRINK
-      case "drink":
-        insertText("Mag ik iets te drinken?");
-        goToPage("main");
+    case "drink":
+      insertText("Mag ik iets te drinken?");
+      goToPage("main");
       break;
-      case "hunger":
-        insertText("Mag ik iets te eten?");
-        goToPage("main");
+    case "hunger":
+      insertText("Mag ik iets te eten?");
+      goToPage("main");
       break;
 
       //PAGE SENTENCES_SOT
-      case "happy":
-        insertText("Ik ben blij");
-        goToPage("main");
+    case "happy":
+      insertText("Ik ben blij");
+      goToPage("main");
       break;
-      case "angry":
-        insertText("Ik ben boos");
-        goToPage("main");
+    case "angry":
+      insertText("Ik ben boos");
+      goToPage("main");
       break;
-      case "pain":
-        insertText("Ik heb pijn");
-        goToPage("main");
+    case "pain":
+      insertText("Ik heb pijn");
+      goToPage("main");
       break;
-      case "sad":
-        insertText("Ik ben verdrietig");
-        goToPage("main");
+    case "sad":
+      insertText("Ik ben verdrietig");
+      goToPage("main");
       break;
-      case "relieved":
-        insertText("Ik ben opgelucht");
-        goToPage("main");
+    case "relieved":
+      insertText("Ik ben opgelucht");
+      goToPage("main");
       break;
 
       //Page SENTENCES_CONVERSATION
-      case "hay":
-        insertText("Hoe gaat het?");
-        goToPage("main");
+    case "hay":
+      insertText("Hoe gaat het?");
+      goToPage("main");
       break;
-      case "hitah":
-        insertText("Hoe is het thuis?");
-        goToPage("main");
+    case "hitah":
+      insertText("Hoe is het thuis?");
+      goToPage("main");
       break;
-      case "ln":
-        insertText("Wat zijn de laatste nieuwtjes?");
-        goToPage("main");
-      break;
-
-      //Page SENTENCES_TOILETHYGIENE
-      case "toilet":
-        insertText("Ik moet naar het toilet");
-        goToPage("main");
-      break;
-      case "shower":
-        insertText("Mag ik douchen?");
-        goToPage("main");
-      break;
-      case "brushteeth":
-        insertText("Mag ik mijn tandenpoetsen?");
-        goToPage("main");
+    case "ln":
+      insertText("Wat zijn de laatste nieuwtjes?");
+      goToPage("main");
       break;
 
       //Page SENTENCES_TOILETHYGIENE
-      case "tv":
-        insertText("Mag ik televisie kijken?");
-        goToPage("main");
+    case "toilet":
+      insertText("Ik moet naar het toilet");
+      goToPage("main");
       break;
-      case "radio":
-        insertText("Mag ik radio luisteren?");
-        goToPage("main");
+    case "shower":
+      insertText("Mag ik douchen?");
+      goToPage("main");
       break;
-      case "games":
-        insertText("Mag ik een spelletje spelen?");
-        goToPage("main");
+    case "brushteeth":
+      insertText("Mag ik mijn tandenpoetsen?");
+      goToPage("main");
       break;
-      case "audiobooks":
-        insertText("Mag ik een luisterboek luisteren?");
-        goToPage("main");
+
+      //Page SENTENCES_TOILETHYGIENE
+    case "tv":
+      insertText("Mag ik televisie kijken?");
+      goToPage("main");
+      break;
+    case "radio":
+      insertText("Mag ik radio luisteren?");
+      goToPage("main");
+      break;
+    case "games":
+      insertText("Mag ik een spelletje spelen?");
+      goToPage("main");
+      break;
+    case "audiobooks":
+      insertText("Mag ik een luisterboek luisteren?");
+      goToPage("main");
       break;
 
       //Page SETTINGS
-      case "calibrate":
-        //TODO Add calibration
+    case "calibrate":
+      //TODO Add calibration
       break;
-      case "exit":
-        //ipc.send('close-main-window');
-        var window = remote.getCurrentWindow();
-        window.close();
+    case "exit":
+      //ipc.send('close-main-window');
+      var window = remote.getCurrentWindow();
+      window.close();
       break;
 
-      default:
-        addLetter(input);
+    default:
+      addLetter(input);
       break;
-    }
-    removeBar(currProgressbar);
+  }
+
+  removeBar(currProgressbar);
 
 }
 
-//Entry point when letter is pressed/looked at ARGS: Button to start
-function startLetter(button_element){
+//Entry point when letter is pressed/looked at ARGS: Button to start, should enable delay with animation
+function startLetter(button_element, wait) {
   var selectedButton = button_element.id;
-  if(selectedButton != currLetter){
-    if(currTimer != null){
+
+  if (selectedButton != currLetter) {
+    if (currTimer != null) {
       clearTimeout(currTimer);
     }
-    if(currProgressbar != null){
+    if (currProgressbar != null) {
       removeBar(currProgressbar);
     }
-    currLetter = selectedButton;
-    createProgressbar(currLetter);
-    startBar(currProgressbar);
-    currTimer = setTimeout(performAction, confirmationDelay);
-  }else{
+    if (wait) {
+      currLetter = selectedButton;
+      createProgressbar(currLetter);
+      startBar(currProgressbar);
+      currTimer = setTimeout(performAction, confirmationDelay);
+    } else {
+      currLetter = selectedButton;
+      createProgressbar(currLetter);
+      startBar(currProgressbar);
+      performAction();
+    }
+
+  } else {
     //Same letter as already selected
   }
 
 }
 
 //Checks if overlay state corresponds with sleeping state
-function checkButtonOverlay(){
+function checkButtonOverlay() {
   var btn = document.querySelectorAll(".keycap, .keycap-wide");
   for (var i = 0; i < btn.length; i++) {
-    if(isSleeping){
+    if (isSleeping) {
       btn[i].style.opacity = 0.4;
-    }else{
+    } else {
       btn[i].style.opacity = 1;
     }
 
   }
 }
 
+function addButtonToArray(button) {
+  var buttonCenter = getCenterPointFromElement(button);
+  eye_buttons.push(new eye_button(buttonCenter.x, buttonCenter.y, button));
+
+}
+
+function eye_button(x, y, name){
+  this.x = x;
+  this.y = y;
+  this.name = name;
+
+  this.update = () =>{
+    var distanceToCursor = calcDistance(x , cursx, y, cursy);
+    if(distanceToCursor < 100){
+
+      context.beginPath();
+      context.moveTo(x, y);
+      context.lineTo(cursx, cursy + window.pageYOffset);
+      context.stroke();
+
+      eyelocation.style.left = x+"px";
+      eyelocation.style.top = y+"px";
+      if(!isSleeping){
+        startLetter(name, true);
+      }else{
+        if(name.id == "keycap_sleep"){
+          startLetter(name, true);
+        }else{
+          removeBar(currProgressbar);
+          clearTimeout(currTimer);
+        }
+      }
+
+    }
+
+    this.isInRangeOfCursor = () =>{
+      return true;
+    }
+  };
+
+}
+
+function getDistanceToCursor(x, y){
+  calcDistance(x , cursx, y, cursy);
+}
+
+//Calculates distance between two points
+function calcDistance(x1, x2, y1, y2){
+  var distX = x1 - x2;
+  var distY = y1 - y2;
+  return Math.sqrt(distX * distX + distY * distY);
+}
+
+//Gets coordinates of element's center, ARGS: element, RETURN: x,y
+function getCenterPointFromElement(button_element){
+
+  var elementRect = button_element.parentElement.getBoundingClientRect();
+
+  var x = elementRect.left;
+  var y = elementRect.top;
+  x = x + elementRect.width / 2;
+  y = y + elementRect.height / 2;
+
+  //x += window.pageXOffset;
+  //y += window.pageYOffset;
+
+  return {
+    x: x,
+    y: y
+  };
+}
+
+function cancelButton() {
+  clearTimeout(currTimer);
+  removeBar(currProgressbar);
+}
+
 //Add event listener for every button with keycap_progress css id
-function enableButtons(){
+function enableButtons() {
   //ALL BUTTONS EXCEPT SLEEP BUTTON
   var btn = document.querySelectorAll(".keycap_progress");
   for (var i = 0; i < btn.length; i++) {
-      btn[i].addEventListener("click", function() {
-        if(!isSleeping){
-          startLetter(this);
-        }else{
-          //DO NOTHING
-        }
+    //Eye handler
+    addButtonToArray(btn[i]);
+    //Click handler
+    btn[i].addEventListener("click", function() {
+      if (!isSleeping) {
+        startLetter(this, touchShouldHaveDelay);
+      } else {
+        //DO NOTHING
+      }
 
-      }, false);
+
+    }, false);
   }
 
   //SLEEP BUTTON
   var sleepbtn = document.querySelectorAll(".keycap_psleep");
-  for (var j = 0; j < btn.length; j++) {
-      sleepbtn[j].addEventListener("click", function() {
-          startLetter(this);
-      }, false);
+  for (var j = 0; j < sleepbtn.length; j++) {
+    //Eye handler
+    addButtonToArray(sleepbtn[j]);
+    //Click handler
+    sleepbtn[j].addEventListener("click", function() {
+      startLetter(this, touchShouldHaveDelay);
+    }, false);
   }
 
-  //BACKGROUND CANCELLER
-  var background_element = document.querySelectorAll(".containerblock");
-  for (var k = 0; k < background_element.length; k++) {
-      sleepbtn[k].addEventListener("click", function() {
-          clearTimeout(currTimer);
-          removeBar(currProgressbar);
-      }, false);
-  }
 }
 
 /**Running code**/
