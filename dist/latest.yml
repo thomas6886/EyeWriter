@@ -1,9 +1,9 @@
-version: 0.1.0
+version: 2.0.0
 files:
-  - url: sound_machine-setup-0.1.0.exe
-    sha512: YW8UOFB+a36psXz/hxa1fnTMyHOBARF+Nzo35qnq2+UdqYytXv/n54fvsrvIjVh8cyRd1QESxh6oaKrvwlLeeQ==
-    size: 38008837
-path: sound_machine-setup-0.1.0.exe
-sha512: YW8UOFB+a36psXz/hxa1fnTMyHOBARF+Nzo35qnq2+UdqYytXv/n54fvsrvIjVh8cyRd1QESxh6oaKrvwlLeeQ==
-sha2: 177deb6c276c5153d78bf705d847fd1fbed4a53e599fa0120429ad531102e74d
-releaseDate: '2018-02-01T07:05:47.544Z'
+  - url: EyeWriter-Setup-2.0.0.exe
+    sha512: ifSUxJgciU2p/k0t/sSvUKPoFLsV/zjKmQ6i+gaKkHZPo6TbN6rq+bdJybojN0ujN9nWlob0PFVDBMYSNotGNw==
+    size: 36674794
+path: EyeWriter-Setup-2.0.0.exe
+sha512: ifSUxJgciU2p/k0t/sSvUKPoFLsV/zjKmQ6i+gaKkHZPo6TbN6rq+bdJybojN0ujN9nWlob0PFVDBMYSNotGNw==
+sha2: 72081a45f1bd2cae5c645f75f27b8b645072f0c037ec52e8d8f7f309b7778a3b
+releaseDate: '2018-06-12T13:51:52.741Z'

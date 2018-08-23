@@ -4,7 +4,6 @@
 const ProgressBar = require('progressbar.js');
 const remote = require('electron').remote;
 const {ipcRenderer} = require('electron');
-var offset = require('document-offset')
 
 //Web Server
 net = require('net');
@@ -17,6 +16,7 @@ var currPage = 0;
 var confirmationDelay = null;
 var webhost = '127.0.0.1';
 var webport = 6969;
+var websocket;
 var isSleeping = false;
 
 //EyeTracking
@@ -26,14 +26,10 @@ var cursx;
 var cursy;
 var eye_buttons;
 
-//canvas
-var canvas = document.getElementById('can');
-var context = canvas.getContext('2d');
-
 /**User variables**/
 var screenHeight = 1080;
 var triggerDistance = 100;
-var touchShouldHaveDelay = true;
+var touchShouldHaveDelay = false;
 
 //ConfirmationDelay values
 var CDelay_slowest = 4000;
@@ -98,7 +94,7 @@ function createWebServer() {
       cursx = arr[0];
       cursy = arr[1];
     });
-
+    websocket = sock;
     // Add a 'close' event handler to this instance of socket
     sock.on('close', function(data) {
       console.log('CLOSED: ' + sock.remoteAddress + ' ' + sock.remotePort);
@@ -431,10 +427,12 @@ function performAction() {
 
       //Page SETTINGS
     case "calibrate":
-      //TODO Add calibration
+      websocket.write('CALIBRATE');
+      toggleSleeping();
+      checkButtonOverlay();
+      goToPage("main");
       break;
     case "exit":
-      //ipc.send('close-main-window');
       var window = remote.getCurrentWindow();
       window.close();
       break;
@@ -502,16 +500,11 @@ function eye_button(x, y, name){
   this.name = name;
 
   this.update = () =>{
-    var distanceToCursor = calcDistance(x , cursx, y, cursy);
-    if(distanceToCursor < 100){
-
-      context.beginPath();
-      context.moveTo(x, y);
-      context.lineTo(cursx, cursy + window.pageYOffset);
-      context.stroke();
+    var distanceToCursor = calcDistance(x , cursx, y- window.pageYOffset, cursy);
+    if(distanceToCursor < triggerDistance){
 
       eyelocation.style.left = x+"px";
-      eyelocation.style.top = y+"px";
+      eyelocation.style.top = y- window.pageYOffset+"px";
       if(!isSleeping){
         startLetter(name, true);
       }else{
@@ -552,9 +545,6 @@ function getCenterPointFromElement(button_element){
   var y = elementRect.top;
   x = x + elementRect.width / 2;
   y = y + elementRect.height / 2;
-
-  //x += window.pageXOffset;
-  //y += window.pageYOffset;
 
   return {
     x: x,

@@ -1,7 +1,0 @@
-directories:
-  output: dist
-  buildResources: build
-appId: eyewriter.id
-mac:
-  category: eyewriter
-electronVersion: 1.7.9
