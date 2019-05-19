@@ -28,7 +28,7 @@ var eye_buttons;
 
 /**User variables**/
 var screenHeight = 1080;
-var triggerDistance = 100;
+var triggerDistance = 80;
 var touchShouldHaveDelay = false;
 
 //ConfirmationDelay values
@@ -48,6 +48,9 @@ function onStartup() {
 
   //Data Server
   createWebServer();
+
+
+  goToPage("startpage");
 
   //Start the loop
   setInterval(function(){ loop_5(); }, 100);
@@ -100,8 +103,12 @@ function createWebServer() {
       console.log('CLOSED: ' + sock.remoteAddress + ' ' + sock.remotePort);
     });
 
+    websocket.write('STARTSTREAM');
+
   }).listen(webport, webhost);
   console.log('Server listening on ' + webhost + ':' + webport);
+
+
 }
 
 //Sets confirmationDelay, how long you have to look at an object before it confirms your selection
@@ -136,6 +143,9 @@ function getPageLocation(pagename) {
     case "settings":
       currPage = 7;
       return 7 * screenHeight;
+    case "startpage":
+      currPage = 8;
+      return 8 * screenHeight;
 
   }
 }
@@ -257,32 +267,32 @@ function performAction() {
       case "slowest":
         setConfirmationDelay(CDelay_slowest);
         document.getElementById('keycap_speed_slowest').style.color = 'green';
-        document.getElementById('keycap_speed_slow').style.color = 'black';
-        document.getElementById('keycap_speed_normal').style.color = 'black';
-        document.getElementById('keycap_speed_fast').style.color = 'black';
+        document.getElementById('keycap_speed_slow').style.color = 'white';
+        document.getElementById('keycap_speed_normal').style.color = 'white';
+        document.getElementById('keycap_speed_fast').style.color = 'white';
 
         break;
       case "slow":
         setConfirmationDelay(CDelay_slow);
-        document.getElementById('keycap_speed_slowest').style.color = 'black';
+        document.getElementById('keycap_speed_slowest').style.color = 'white';
         document.getElementById('keycap_speed_slow').style.color = 'green';
-        document.getElementById('keycap_speed_normal').style.color = 'black';
-        document.getElementById('keycap_speed_fast').style.color = 'black';
+        document.getElementById('keycap_speed_normal').style.color = 'white';
+        document.getElementById('keycap_speed_fast').style.color = 'white';
 
         break;
       case "normal":
         setConfirmationDelay(CDelay_normal);
-        document.getElementById('keycap_speed_slowest').style.color = 'black';
-        document.getElementById('keycap_speed_slow').style.color = 'black';
+        document.getElementById('keycap_speed_slowest').style.color = 'white';
+        document.getElementById('keycap_speed_slow').style.color = 'white';
         document.getElementById('keycap_speed_normal').style.color = 'green';
-        document.getElementById('keycap_speed_fast').style.color = 'black';
+        document.getElementById('keycap_speed_fast').style.color = 'white';
 
         break;
       case "fast":
         setConfirmationDelay(CDelay_fast);
-        document.getElementById('keycap_speed_slowest').style.color = 'black';
-        document.getElementById('keycap_speed_slow').style.color = 'black';
-        document.getElementById('keycap_speed_normal').style.color = 'black';
+        document.getElementById('keycap_speed_slowest').style.color = 'white';
+        document.getElementById('keycap_speed_slow').style.color = 'white';
+        document.getElementById('keycap_speed_normal').style.color = 'white';
         document.getElementById('keycap_speed_fast').style.color = 'green';
 
         break;
@@ -435,6 +445,20 @@ function performAction() {
     case "exit":
       var window = remote.getCurrentWindow();
       window.close();
+      break;
+
+    //Page STARTPAGE
+    case "newuser":
+      websocket.write('CALIBRATE');
+      toggleSleeping();
+      checkButtonOverlay();
+      goToPage("main");
+      break;
+
+    case "currentuser":
+      toggleSleeping();
+      checkButtonOverlay();
+      goToPage("main");
       break;
 
     default:
