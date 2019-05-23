@@ -103,7 +103,7 @@ function createWebServer() {
       console.log('CLOSED: ' + sock.remoteAddress + ' ' + sock.remotePort);
     });
 
-    websocket.write('STARTSTREAM');
+    //websocket.write('STARTSTREAM');
 
   }).listen(webport, webhost);
   console.log('Server listening on ' + webhost + ':' + webport);
