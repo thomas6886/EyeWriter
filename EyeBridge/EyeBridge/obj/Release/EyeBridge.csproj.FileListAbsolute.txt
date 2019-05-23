@@ -1,0 +1,17 @@
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\bin\Release\Tobii.EyeX.Client.dll
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\bin\Release\EyeBridge.exe.config
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\bin\Release\EyeBridge.exe
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\bin\Release\EyeBridge.pdb
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\bin\Release\NamedPipeWrapper.dll
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\bin\Release\SimpleTCP.dll
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\bin\Release\Tobii.Interaction.Model.dll
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\bin\Release\Tobii.Interaction.Net.dll
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\bin\Release\NamedPipeWrapper.pdb
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\obj\Release\EyeBridge.csprojAssemblyReference.cache
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\obj\Release\EyeBridge.Form1.resources
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\obj\Release\EyeBridge.Properties.Resources.resources
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\obj\Release\EyeBridge.csproj.GenerateResource.cache
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\obj\Release\EyeBridge.csproj.CoreCompileInputs.cache
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\obj\Release\EyeBridge.csproj.CopyComplete
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\obj\Release\EyeBridge.exe
+F:\Development\EyeWriter\Electron\EyeBridge\EyeBridge\obj\Release\EyeBridge.pdb
