@@ -11,7 +11,7 @@
   "repository": "https://github.com/thomas6886/EyeWriter",
   "devDependencies": {
     "electron": "^2.0.8",
-    "electron-builder": "^20.15.1"
+    "electron-builder": "^20.41.0"
   },
   "license": "MIT",
   "dependencies": {
